@@ -17,9 +17,9 @@ const monitors = [
   {
     name: "Rayan",
     role: "Moniteur & Spécialiste Vitesse",
-    bio: "Compétitrice dans l'âme, Claire est notre experte en vitesse et en perfectionnement. Elle vous poussera à dépasser vos limites sur le sable de Denneville.",
+    bio: "Compétieur dans l'âme, Rayan est notre expert en vitesse et en perfectionnement. Il vous poussera à dépasser vos limites sur le sable de Denneville.",
     image: "https://placehold.co/400x400.png",
-    hint: "female portrait"
+    hint: "male portrait"
   }
 ];
 
