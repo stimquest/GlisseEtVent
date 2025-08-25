@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://glisse-et-vent.netlify.app/sitemap.xml
+
+# Crawl delay to respect server resources
+Crawl-delay: 1
+
+# Allow Google to index images
+User-agent: Googlebot-Image
+Allow: /img/
+Allow: /public/img/
+
+# Additional sitemaps for images
+Sitemap: https://glisse-et-vent.netlify.app/sitemap-images.xml

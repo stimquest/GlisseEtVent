@@ -22,10 +22,10 @@ export function HeroCard({ className }: { className?: string }) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
         </div>
       <CardContent className="relative z-10 flex flex-col items-center justify-center text-center h-full p-6 md:p-12">
-        <h2 className="text-5xl md:text-7xl tracking-wider text-white">
+        <h1 className="text-5xl md:text-7xl tracking-wider text-white">
             Votre Aventure Char à Voile
-        </h2>
-        <p className="mt-2 text-3xl md:text-4xl text-accent">
+        </h1>
+        <p className="mt-2 text-3xl md:text-4xl text-accent font-semibold">
             À Denneville-Plage
         </p>
         <p className="mt-4 max-w-2xl text-2xl">

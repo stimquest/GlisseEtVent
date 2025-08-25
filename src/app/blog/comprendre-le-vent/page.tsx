@@ -35,7 +35,7 @@ export default function ArticleVent() {
 
           <div className="relative h-64 md:h-96 w-full rounded-lg overflow-hidden mb-8">
             <Image 
-              src="/img/Blog/Art-vent.jpg" 
+              src="/img/Blog/Art7.jpg" 
               alt="Manche à air flottant au vent sur une plage ensoleillée" 
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 75vw, 1000px"

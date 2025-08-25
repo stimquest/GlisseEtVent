@@ -10,7 +10,7 @@ const monitors = [
   {
     name: "Frenzy",
     role: "Moniteur Principal & Fondateur",
-    bio: "Passionné de char à voile depuis son plus jeune âge, Julien a fondé Glisse et Vent pour partager son amour de la glisse et du vent. Il saura vous transmettre les meilleures techniques en toute sécurité.",
+    bio: "Passionné de char à voile depuis son plus jeune âge, François a fondé Glisse et Vent pour partager son amour de la glisse et du vent. Il saura vous transmettre les meilleures techniques en toute sécurité.",
     image: "https://placehold.co/400x400.png",
     hint: "male portrait"
   },
@@ -30,7 +30,7 @@ export default function AboutPage() {
       <main className="flex-grow p-4 sm:p-6 md:p-8 space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle className="text-4xl flex items-center gap-3">
+            <CardTitle as="h1" className="text-4xl flex items-center gap-3">
               <Sunset className="w-8 h-8 text-accent" />
               Notre École, Notre Passion
             </CardTitle>
@@ -45,14 +45,14 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="md:w-1/2 h-64 md:h-80 relative rounded-lg overflow-hidden">
-              <Image src="https://placehold.co/800x600.png" alt="Char à voile au coucher du soleil" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" data-ai-hint="sailing sunset" />
+              <Image src="https://placehold.co/800x600.png" alt="Char à voile naviguant au coucher du soleil sur la plage de Denneville - École Glisse et Vent" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" data-ai-hint="sailing sunset" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-4xl flex items-center gap-3">
+            <CardTitle as="h2" className="text-4xl flex items-center gap-3">
               <Users className="w-8 h-8 text-accent" />
               Nos Moniteurs
             </CardTitle>
@@ -61,10 +61,10 @@ export default function AboutPage() {
             {monitors.map(monitor => (
               <div key={monitor.name} className="flex flex-col sm:flex-row gap-6 items-center">
                 <div className="w-32 h-32 relative rounded-full overflow-hidden shrink-0">
-                  <Image src={monitor.image} alt={`Portrait de ${monitor.name}`} fill sizes="128px" className="object-cover" data-ai-hint={monitor.hint} />
+                  <Image src={monitor.image} alt={`Portrait de ${monitor.name} - ${monitor.role} chez Glisse et Vent`} fill sizes="128px" className="object-cover" data-ai-hint={monitor.hint} />
                 </div>
                 <div className="text-center sm:text-left">
-                  <h3 className="text-2xl">{monitor.name}</h3>
+                  <h3 className="text-2xl font-semibold">{monitor.name}</h3>
                   <p className="text-accent font-semibold text-lg">{monitor.role}</p>
                   <p className="mt-2 text-muted-foreground text-xl">{monitor.bio}</p>
                 </div>
@@ -75,7 +75,7 @@ export default function AboutPage() {
 
         <Card className="text-center">
             <CardHeader>
-                <CardTitle className="text-4xl">Prêt à nous rejoindre ?</CardTitle>
+                <CardTitle as="h2" className="text-4xl">Prêt à nous rejoindre ?</CardTitle>
             </CardHeader>
             <CardContent>
                 <p className="mb-4 text-xl">Contactez-nous pour toute question ou réservation.</p>

@@ -30,7 +30,7 @@ const blogPosts = [
   {
     title: "Comprendre le Vent : Le Secret des Pilotes Performants",
     excerpt: "Le vent est votre moteur. Apprenez à lire ses sautes, à anticiper les rafales et à utiliser chaque souffle à votre avantage...",
-    image: "/img/Blog/Art-vent.jpg",
+    image: "/img/Blog/Art7.jpg",
     hint: "wind weather",
     slug: "comprendre-le-vent"
   },
