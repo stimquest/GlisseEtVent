@@ -11,14 +11,14 @@ const monitors = [
     name: "Frenzy",
     role: "Moniteur Principal & Fondateur",
     bio: "Passionné de char à voile depuis son plus jeune âge, François a fondé Glisse et Vent pour partager son amour de la glisse et du vent. Il saura vous transmettre les meilleures techniques en toute sécurité.",
-    image: "https://placehold.co/400x400.png",
+    image: "/img/frenzy.png",
     hint: "male portrait"
   },
   {
     name: "Rayan",
     role: "Moniteur & Spécialiste Vitesse",
     bio: "Compétiteur dans l'âme, Rayan est notre expert en vitesse et en perfectionnement. Il vous poussera à dépasser vos limites sur le sable de Denneville.",
-    image: "https://placehold.co/400x400.png",
+    image: "/img/rayan.png",
     hint: "male portrait"
   }
 ];
