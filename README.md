@@ -9,9 +9,10 @@ Site web pour l'école de char à voile de Denneville-Plage, Normandie.
 - **Système de réservation** de créneaux
 - **Dashboard administrateur** complet
 - **Gestion des créneaux** et réservations
-- **Formulaire de contact** avec envoi d'emails
+- **Formulaire de contact** multi-options (Web3Forms, Netlify Forms, SMTP)
 - **Pages légales** : RGPD et mentions légales
 - **Footer professionnel** avec lien admin discret
+- **Sécurité renforcée** : Variables d'environnement côté serveur
 
 ## 🔧 Configuration
 
@@ -55,7 +56,68 @@ OPENWEATHERMAP_API_KEY=votre-cle-openweathermap
 - **Authentification admin** avec mot de passe
 - **Lien admin discret** dans le footer
 
-## 📱 Accès administrateur
+## 📧 Configuration des Formulaires de Contact
+
+Votre site propose **3 solutions sécurisées** pour les formulaires de contact :
+
+### **Option 1 : Web3Forms (RECOMMANDÉ)** ⭐
+- ✅ **Sécurité maximale** : Pas de credentials exposés
+- ✅ **RGPD compliant** : Gestion des données personnelles
+- ✅ **Gratuit** : 250 emails/mois
+- ✅ **Simple** : Configuration en 2 minutes
+
+**Configuration :**
+1. Créez un compte sur [https://web3forms.com/](https://web3forms.com/)
+2. Ajoutez votre clé dans Netlify :
+   ```
+   Nom: WEB3FORMS_ACCESS_KEY
+   Valeur: votre-clé-ici
+   Type: Secret
+   ```
+
+### **Option 2 : Netlify Forms (Intégré)**
+- ✅ **Parfaitement intégré** à Netlify
+- ✅ **Analytics intégrés**
+- ✅ **Aucune configuration externe**
+
+**Configuration :**
+```
+Nom: NEXT_PUBLIC_USE_NETLIFY_FORMS
+Valeur: true
+Type: Public
+```
+
+### **Option 3 : SMTP Gmail (Classique)**
+- ✅ **Contrôle total**
+- ✅ **Personnalisation avancée**
+- ⚠️ **Configuration plus complexe**
+
+**Configuration :**
+```
+Nom: SMTP_HOST
+Valeur: smtp.gmail.com
+Type: Secret
+
+Nom: SMTP_PORT
+Valeur: 587
+Type: Secret
+
+Nom: SMTP_USER
+Valeur: votre-email@gmail.com
+Type: Secret
+
+Nom: SMTP_PASS
+Valeur: votre-mot-de-passe-application
+Type: Secret
+
+Nom: CONTACT_EMAIL
+Valeur: votre-email@gmail.com
+Type: Secret
+```
+
+**📖 Guide complet :** Consultez `FORMULARIO_CONTACTO.md` pour tous les détails.
+
+## � Accès administrateur
 
 - **URL** : `/admin`
 - **Mot de passe** : `glisse123` (à changer en production)

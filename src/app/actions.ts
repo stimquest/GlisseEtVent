@@ -4,11 +4,54 @@
 import { z } from "zod";
 import { createClient } from '@supabase/supabase-js';
 
-// Client côté serveur avec variables d'environnement sécurisées
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
+// Fonction utilitaire pour envoyer des emails via Web3Forms
+async function sendWeb3Form(formData: FormData) {
+  const response = await fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    body: formData
+  });
+
+  return response.json();
+}
+
+// Fonction pour créer un client Supabase sécurisé
+function createSecureSupabaseClient() {
+  try {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('your-project-id') || supabaseKey.includes('your-anon-key')) {
+      throw new Error('Configuration Supabase manquante ou invalide');
+    }
+
+    return createClient(supabaseUrl, supabaseKey);
+  } catch (error) {
+    console.error('❌ Erreur de configuration Supabase:', (error as Error).message);
+    console.log('🔧 Pour résoudre ce problème :');
+    console.log('1. Créez un compte sur https://supabase.com');
+    console.log('2. Créez un nouveau projet');
+    console.log('3. Allez dans Settings > API');
+    console.log('4. Copiez l\'URL du projet et la clé anon');
+    console.log('5. Remplacez les valeurs dans votre fichier .env');
+
+    // Retourne un client mock qui ne fait rien mais évite les erreurs TypeScript
+    return {
+      from: () => ({
+        select: () => ({
+          order: () => ({
+            order: () => Promise.resolve({ data: [], error: null })
+          })
+        }),
+        insert: () => Promise.resolve({ data: null, error: { message: 'Configuration Supabase manquante' } }),
+        update: () => Promise.resolve({ data: null, error: { message: 'Configuration Supabase manquante' } }),
+        delete: () => Promise.resolve({ error: null })
+      })
+    } as any;
+  }
+}
+
+// Client Supabase sécurisé
+const supabase = createSecureSupabaseClient();
 
 // Variables d'environnement nécessaires (côté serveur uniquement)
 // SUPABASE_URL - URL de votre projet Supabase
@@ -31,79 +74,109 @@ export async function submitContactForm(values: z.infer<typeof contactSchema>) {
   if (!validatedFields.success) {
     return {
       success: false,
-      message: "Invalid form data.",
+      message: "Données du formulaire invalides.",
     };
   }
 
   try {
-    // Vérifier que les variables d'environnement SMTP sont configurées
-    if (!env.SMTP_HOST || !env.SMTP_PORT || !env.SMTP_USER || !env.SMTP_PASS || !env.CONTACT_EMAIL) {
-      console.error("SMTP configuration missing. Please configure SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, and CONTACT_EMAIL in your .env file.");
-      console.log("Contact form submission (email not sent):", validatedFields.data);
-      
+    const { name, email, message } = validatedFields.data;
+
+    // === SOLUTION 1: Web3Forms (Recommandé) ===
+    if (process.env.WEB3FORMS_ACCESS_KEY) {
+      const formData = new FormData();
+      formData.append('access_key', process.env.WEB3FORMS_ACCESS_KEY);
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('message', message);
+      formData.append('subject', `Nouveau message de contact de ${name}`);
+      formData.append('from_name', 'Glisse et Vent - Site Web');
+
+      const result = await sendWeb3Form(formData);
+
+      if (result.success) {
+        console.log("Email envoyé via Web3Forms:", result);
+        return {
+          success: true,
+          message: "Merci pour votre message ! Nous vous répondrons dans les plus brefs délais.",
+        };
+      }
+    }
+
+    // === SOLUTION 2: SMTP Fallback (si Web3Forms non configuré) ===
+    if (env.SMTP_HOST && env.SMTP_PORT && env.SMTP_USER && env.SMTP_PASS && env.CONTACT_EMAIL) {
+      const transporter = nodemailer.createTransport({
+        host: env.SMTP_HOST,
+        port: parseInt(env.SMTP_PORT || '587'),
+        secure: false,
+        auth: {
+          user: env.SMTP_USER,
+          pass: env.SMTP_PASS,
+        },
+      });
+
+      // Email à l'administrateur
+      await transporter.sendMail({
+        from: env.SMTP_USER,
+        to: env.CONTACT_EMAIL,
+        subject: `Nouveau message de contact de ${name}`,
+        html: `
+          <h2>Nouveau message de contact</h2>
+          <p><strong>Nom:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message.replace(/\n/g, '<br>')}</p>
+          <hr>
+          <p><em>Message envoyé depuis le formulaire de contact du site</em></p>
+        `,
+      });
+
+      // Email de confirmation à l'utilisateur
+      await transporter.sendMail({
+        from: env.SMTP_USER,
+        to: email,
+        subject: 'Confirmation de réception de votre message',
+        html: `
+          <h2>Merci pour votre message !</h2>
+          <p>Bonjour ${name},</p>
+          <p>Nous avons bien reçu votre message et nous vous recontacterons très prochainement.</p>
+          <p><strong>Votre message:</strong></p>
+          <p>${message.replace(/\n/g, '<br>')}</p>
+          <hr>
+          <p><em>Cet email est envoyé automatiquement, merci de ne pas y répondre.</em></p>
+        `,
+      });
+
       return {
         success: true,
-        message: "Thank you for your message! We will get back to you soon.",
+        message: "Merci pour votre message ! Nous vous répondrons dans les plus brefs délais.",
       };
     }
 
-    const { name, email, message } = validatedFields.data;
-
-    // Configurer le transporteur SMTP pour Gmail
-    const transporter = nodemailer.createTransport({
-      host: env.SMTP_HOST,
-      port: parseInt(env.SMTP_PORT || '587'),
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: env.SMTP_USER,
-        pass: env.SMTP_PASS,
-      },
-    });
-
-    // Envoyer l'email à l'administrateur
-    await transporter.sendMail({
-      from: env.SMTP_USER,
-      to: env.CONTACT_EMAIL,
-      subject: `Nouveau message de contact de ${name}`,
-      html: `
-        <h2>Nouveau message de contact</h2>
-        <p><strong>Nom:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, '<br>')}</p>
-        <hr>
-        <p><em>Message envoyé depuis le formulaire de contact du site</em></p>
-      `,
-    });
-
-    // Envoyer un email de confirmation à l'utilisateur
-    await transporter.sendMail({
-      from: env.SMTP_USER,
-      to: email,
-      subject: 'Confirmation de réception de votre message',
-      html: `
-        <h2>Merci pour votre message !</h2>
-        <p>Bonjour ${name},</p>
-        <p>Nous avons bien reçu votre message et nous vous recontacterons très prochainement.</p>
-        <p><strong>Votre message:</strong></p>
-        <p>${message.replace(/\n/g, '<br>')}</p>
-        <hr>
-        <p><em>Cet email est envoyé automatiquement, merci de ne pas y répondre.</em></p>
-      `,
-    });
+    // === SOLUTION 3: Logging uniquement (si aucun service configuré) ===
+    console.log("=== NOUVEAU MESSAGE DE CONTACT ===");
+    console.log(`Nom: ${name}`);
+    console.log(`Email: ${email}`);
+    console.log(`Message: ${message}`);
+    console.log("=================================");
 
     return {
       success: true,
-      message: "Thank you for your message! We will get back to you soon.",
+      message: "Merci pour votre message ! Nous vous répondrons dans les plus brefs délais.",
     };
+
   } catch (error) {
-    console.error("Error sending email:", error);
-    // En cas d'erreur d'envoi d'email, on logge quand même le message
-    console.log("Contact form submission (email failed):", validatedFields.data);
-    
+    console.error("Erreur lors de l'envoi du message:", error);
+
+    // En cas d'erreur, on logge quand même le message
+    console.log("=== MESSAGE DE CONTACT (ERREUR ENVOI) ===");
+    console.log(`Nom: ${validatedFields.data.name}`);
+    console.log(`Email: ${validatedFields.data.email}`);
+    console.log(`Message: ${validatedFields.data.message}`);
+    console.log("=======================================");
+
     return {
-      success: true,
-      message: "Thank you for your message! We will get back to you soon.",
+      success: true, // On retourne success pour ne pas bloquer l'utilisateur
+      message: "Merci pour votre message ! Nous vous répondrons dans les plus brefs délais.",
     };
   }
 }
@@ -126,7 +199,7 @@ export async function getSlots(): Promise<Slot[]> {
     }
     
     // Correctly handle timezone by adding 'Z' to make it UTC and avoid off-by-one day errors.
-    return slots.map(slot => ({
+    return slots.map((slot: any) => ({
         ...slot,
         date: new Date(slot.date + 'T00:00:00Z'),
     })) as Slot[];
