@@ -2,7 +2,17 @@
 "use server";
 
 import { z } from "zod";
-import { supabase } from "@/lib/supabase";
+import { createClient } from '@supabase/supabase-js';
+
+// Client côté serveur avec variables d'environnement sécurisées
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
+);
+
+// Variables d'environnement nécessaires (côté serveur uniquement)
+// SUPABASE_URL - URL de votre projet Supabase
+// SUPABASE_ANON_KEY - Clé anonyme Supabase
 import type { Slot, Booking } from "./admin/types";
 import { revalidatePath } from "next/cache";
 import nodemailer from "nodemailer";
