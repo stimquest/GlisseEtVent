@@ -8,6 +8,7 @@ import { HeroCard } from "@/components/hero-card";
 import { AboutCard } from "@/components/about-card";
 import { GameCard } from "@/components/game-card";
 import { BlogCarousel } from "@/components/blog-carousel";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -39,6 +40,33 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* Footer avec mentions légales et lien admin discret */}
+      <footer className="mt-16 py-6 border-t border-border/50 bg-muted/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+            <div className="text-center md:text-left">
+              <p>&copy; 2025 Glisse et Vent - Char à Voile Denneville-plage</p>
+              <p className="text-xs mt-1">Tous droits réservés</p>
+            </div>
+            <div className="flex items-center gap-6 text-xs">
+              <Link href="/rgpd" className="hover:text-foreground transition-colors">
+                Politique de confidentialité
+              </Link>
+              <Link href="/mentions-legales" className="hover:text-foreground transition-colors">
+                Mentions légales
+              </Link>
+              <a
+                href="/admin"
+                className="text-muted-foreground/60 hover:text-muted-foreground transition-colors opacity-60"
+                title="Administration"
+              >
+                Admin
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

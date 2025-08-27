@@ -1,6 +1,4 @@
 
-"use client";
-
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,7 +28,6 @@ const Logo = () => (
 
 
 export function Header({ className, inverted }: { className?: string, inverted?: boolean }) {
-
   return (
     <header className="p-4 sm:p-6 md:p-8 flex items-center justify-between">
       <Link href="/" className="flex items-center gap-4 group">

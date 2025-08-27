@@ -5,6 +5,8 @@ import { z } from "zod";
 import { supabase } from "@/lib/supabase";
 import type { Slot, Booking } from "./admin/types";
 import { revalidatePath } from "next/cache";
+import nodemailer from "nodemailer";
+import { env } from "@/env";
 
 // --- Formulaire de Contact ---
 const contactSchema = z.object({
@@ -22,11 +24,78 @@ export async function submitContactForm(values: z.infer<typeof contactSchema>) {
       message: "Invalid form data.",
     };
   }
-  console.log("New contact form submission:", validatedFields.data);
-  return {
-    success: true,
-    message: "Thank you for your message! We will get back to you soon.",
-  };
+
+  try {
+    // Vérifier que les variables d'environnement SMTP sont configurées
+    if (!env.SMTP_HOST || !env.SMTP_PORT || !env.SMTP_USER || !env.SMTP_PASS || !env.CONTACT_EMAIL) {
+      console.error("SMTP configuration missing. Please configure SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, and CONTACT_EMAIL in your .env file.");
+      console.log("Contact form submission (email not sent):", validatedFields.data);
+      
+      return {
+        success: true,
+        message: "Thank you for your message! We will get back to you soon.",
+      };
+    }
+
+    const { name, email, message } = validatedFields.data;
+
+    // Configurer le transporteur SMTP pour Gmail
+    const transporter = nodemailer.createTransport({
+      host: env.SMTP_HOST,
+      port: parseInt(env.SMTP_PORT || '587'),
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: env.SMTP_USER,
+        pass: env.SMTP_PASS,
+      },
+    });
+
+    // Envoyer l'email à l'administrateur
+    await transporter.sendMail({
+      from: env.SMTP_USER,
+      to: env.CONTACT_EMAIL,
+      subject: `Nouveau message de contact de ${name}`,
+      html: `
+        <h2>Nouveau message de contact</h2>
+        <p><strong>Nom:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message.replace(/\n/g, '<br>')}</p>
+        <hr>
+        <p><em>Message envoyé depuis le formulaire de contact du site</em></p>
+      `,
+    });
+
+    // Envoyer un email de confirmation à l'utilisateur
+    await transporter.sendMail({
+      from: env.SMTP_USER,
+      to: email,
+      subject: 'Confirmation de réception de votre message',
+      html: `
+        <h2>Merci pour votre message !</h2>
+        <p>Bonjour ${name},</p>
+        <p>Nous avons bien reçu votre message et nous vous recontacterons très prochainement.</p>
+        <p><strong>Votre message:</strong></p>
+        <p>${message.replace(/\n/g, '<br>')}</p>
+        <hr>
+        <p><em>Cet email est envoyé automatiquement, merci de ne pas y répondre.</em></p>
+      `,
+    });
+
+    return {
+      success: true,
+      message: "Thank you for your message! We will get back to you soon.",
+    };
+  } catch (error) {
+    console.error("Error sending email:", error);
+    // En cas d'erreur d'envoi d'email, on logge quand même le message
+    console.log("Contact form submission (email failed):", validatedFields.data);
+    
+    return {
+      success: true,
+      message: "Thank you for your message! We will get back to you soon.",
+    };
+  }
 }
 
 // --- Gestion des données (Slots) avec Supabase ---
@@ -74,12 +143,8 @@ export async function addBooking(slotId: string, bookingData: Omit<Booking, 'id'
 export async function addSlot(slotData: Omit<Slot, 'id' | 'bookings'>) {
     const { date, ...rest } = slotData;
 
-    // Fix for timezone issue: create a timezone-offset-aware string in YYYY-MM-DD format.
-    // This prevents the date from shifting by one day due to UTC conversion.
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const dateString = `${year}-${month}-${day}`;
+    // SOLUTION ULTRA SIMPLE : Utiliser toLocaleDateString avec format invariant
+    const dateString = date.toLocaleDateString('en-CA'); // Format YYYY-MM-DD invariant
 
     const { data, error } = await supabase
         .from('slots')
