@@ -56,60 +56,57 @@ export default function ContactPage({ searchParams }: { searchParams?: { success
                       <CardDescription>Envoyez-nous un message, nous vous répondrons rapidement.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {/* Netlify Forms configuration: name, method=POST, data-netlify, honeypot, hidden form-name */}
+                      {/* Netlify Forms configuration: minimal form markup */}
                       <form
                         name="contact"
                         method="POST"
                         data-netlify="true"
-                        data-netlify-honeypot="bot-field"
                         action="/contact?success=true"
                         className="space-y-4"
                       >
-                        {/* Hidden input required by Netlify to identify the form */}
                         <input type="hidden" name="form-name" value="contact" />
-                        {/* Honeypot field (invisible for users) */}
-                        <p className="hidden">
-                          <label>
-                            Ne pas remplir: <input name="bot-field" />
+
+                        <p>
+                          <label className="block text-sm font-medium">Nom
+                            <input
+                              type="text"
+                              name="name"
+                              className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
+                              required
+                            />
                           </label>
                         </p>
 
-                        <div>
-                          <label className="block text-sm font-medium">Nom</label>
-                          <input
-                            type="text"
-                            name="name"
-                            className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium">Email</label>
-                          <input
-                            type="email"
-                            name="email"
-                            className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium">Message</label>
-                          <textarea
-                            name="message"
-                            className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
-                            rows={6}
-                            required
-                          />
-                        </div>
-                        <div className="flex items-center gap-4">
+                        <p>
+                          <label className="block text-sm font-medium">Email
+                            <input
+                              type="email"
+                              name="email"
+                              className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
+                              required
+                            />
+                          </label>
+                        </p>
+
+                        <p>
+                          <label className="block text-sm font-medium">Message
+                            <textarea
+                              name="message"
+                              className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
+                              rows={6}
+                              required
+                            />
+                          </label>
+                        </p>
+
+                        <p>
                           <button
                             type="submit"
                             className="inline-flex items-center rounded bg-accent px-4 py-2 text-white"
                           >
                             Envoyer
                           </button>
-                          {success && <span className="text-green-500">Message envoyé — merci !</span>}
-                        </div>
+                        </p>
                       </form>
                     </CardContent>
                  </Card>
