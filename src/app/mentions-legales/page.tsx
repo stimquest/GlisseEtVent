@@ -78,7 +78,7 @@ export default function MentionsLegalesPage() {
                 Pour toute question concernant ces mentions légales, vous pouvez nous contacter :
               </p>
               <ul className="list-none pl-0 mt-4">
-                <li>Email : contact@glisse-et-vent.fr</li>
+                {/* <li>Email :  glissetvent1@gmail.com</li> */}
                 <li>Adresse : Plage de Denneville, 50580 Denneville, France</li>
               </ul>
             </section>

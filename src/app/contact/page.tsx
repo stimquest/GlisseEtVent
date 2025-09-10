@@ -1,10 +1,34 @@
-
+"use client";
 import { Header } from "@/components/header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ContactCard } from "@/components/contact-card";
 import { MapPin, Phone, Mail } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function ContactPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+
+  // Vérifie l'URL pour afficher le message de succès après redirection Netlify
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("success") === "true") {
+      setStatus("success");
+      // Optionnel: nettoyer les champs après redirection
+      setName("");
+      setEmail("");
+      setMessage("");
+      // Nettoyer l'URL (facultatif)
+      if (window.history && window.history.replaceState) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("success");
+        window.history.replaceState({}, document.title, url.toString());
+      }
+    }
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Header />
@@ -17,21 +41,21 @@ export default function ContactPage() {
                             <MapPin className="w-8 h-8 text-accent" />
                             Contact & Accès
                         </CardTitle>
-                        <CardDescription className="text-xl">Retrouvez-nous sur la plage ou contactez-nous directement.</CardDescription>
+                        <CardDescription className="text-xl">Le point de rendez-vous se situe devant le bar Le Gravelot, où nos moniteurs vous accueilleront avant chaque séance.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4 text-lg">
                         <div className="flex items-center gap-4">
                             <MapPin className="w-6 h-6 text-accent shrink-0"/>
-                            <span>La Cale de Denneville-Plage, 50580 Denneville</span>
+                            <span>1 Av. de Jersey, 50580 Port-Bail-sur-Mer</span>
                         </div>
                         <div className="flex items-center gap-4">
                             <Phone className="w-6 h-6 text-accent shrink-0"/>
-                            <a href="tel:+33612345678" className="hover:text-accent">06 12 34 56 78</a>
+                            <a href="tel:+33629137852" className="hover:text-accent">06 29 13 78 52</a>
                         </div>
-                         <div className="flex items-center gap-4">
+                        {/*  <div className="flex items-center gap-4">
                             <Mail className="w-6 h-6 text-accent shrink-0"/>
                             <a href="mailto:contact@glisseetvent.com" className="hover:text-accent">contact@glisseetvent.com</a>
-                        </div>
+                        </div> */}
                     </CardContent>
                 </Card>
                  <Card className="aspect-[16/9]">
@@ -50,7 +74,76 @@ export default function ContactPage() {
                 </Card>
             </div>
             <div className="min-h-[500px]">
-                 <ContactCard className="h-full"/>
+                 <Card>
+                    <CardHeader>
+                      <CardTitle className="text-2xl">Contactez-nous</CardTitle>
+                      <CardDescription>Envoyez-nous un message, nous vous répondrons rapidement.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {/* Netlify Forms configuration: name, method=POST, data-netlify, honeypot, hidden form-name */}
+                      <form
+                        name="contact"
+                        method="POST"
+                        data-netlify="true"
+                        data-netlify-honeypot="bot-field"
+                        action="/contact?success=true"
+                        className="space-y-4"
+                      >
+                        {/* Hidden input required by Netlify to identify the form */}
+                        <input type="hidden" name="form-name" value="contact" />
+                        {/* Honeypot field (invisible for users) */}
+                        <p className="hidden">
+                          <label>
+                            Ne pas remplir: <input name="bot-field" />
+                          </label>
+                        </p>
+
+                        <div>
+                          <label className="block text-sm font-medium">Nom</label>
+                          <input
+                            type="text"
+                            name="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium">Email</label>
+                          <input
+                            type="email"
+                            name="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium">Message</label>
+                          <textarea
+                            name="message"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
+                            rows={6}
+                            required
+                          />
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <button
+                            type="submit"
+                            className="inline-flex items-center rounded bg-accent px-4 py-2 text-white"
+                          >
+                            Envoyer
+                          </button>
+                          {status === "success" && <span className="text-green-500">Message envoyé — merci !</span>}
+                          {status === "error" && <span className="text-red-500">Erreur lors de l'envoi. Vérifiez les champs et réessayez.</span>}
+                        </div>
+                      </form>
+                    </CardContent>
+                 </Card>
             </div>
         </div>
       </main>
