@@ -1,33 +1,9 @@
-"use client";
 import { Header } from "@/components/header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { MapPin, Phone, Mail } from "lucide-react";
-import { useState, useEffect } from "react";
 
-export default function ContactPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
-
-  // Vérifie l'URL pour afficher le message de succès après redirection Netlify
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("success") === "true") {
-      setStatus("success");
-      // Optionnel: nettoyer les champs après redirection
-      setName("");
-      setEmail("");
-      setMessage("");
-      // Nettoyer l'URL (facultatif)
-      if (window.history && window.history.replaceState) {
-        const url = new URL(window.location.href);
-        url.searchParams.delete("success");
-        window.history.replaceState({}, document.title, url.toString());
-      }
-    }
-  }, []);
+export default function ContactPage({ searchParams }: { searchParams?: { success?: string } }) {
+  const success = searchParams?.success === "true";
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -103,8 +79,6 @@ export default function ContactPage() {
                           <input
                             type="text"
                             name="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
                             className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
                             required
                           />
@@ -114,8 +88,6 @@ export default function ContactPage() {
                           <input
                             type="email"
                             name="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
                             className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
                             required
                           />
@@ -124,8 +96,6 @@ export default function ContactPage() {
                           <label className="block text-sm font-medium">Message</label>
                           <textarea
                             name="message"
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
                             className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
                             rows={6}
                             required
@@ -138,8 +108,7 @@ export default function ContactPage() {
                           >
                             Envoyer
                           </button>
-                          {status === "success" && <span className="text-green-500">Message envoyé — merci !</span>}
-                          {status === "error" && <span className="text-red-500">Erreur lors de l'envoi. Vérifiez les champs et réessayez.</span>}
+                          {success && <span className="text-green-500">Message envoyé — merci !</span>}
                         </div>
                       </form>
                     </CardContent>
