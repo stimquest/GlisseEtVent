@@ -81,7 +81,17 @@ export async function submitContactForm(values: z.infer<typeof contactSchema>) {
   try {
     const { name, email, message } = validatedFields.data;
 
-    // === SOLUTION 1: Web3Forms (Recommandé) ===
+    // === SOLUTION 1: Netlify Forms (si activé) ===
+    if (process.env.NEXT_PUBLIC_USE_NETLIFY_FORMS === "true") {
+      console.log("📧 Envoi via Netlify Forms");
+      // Netlify Forms gère automatiquement la soumission côté client avec les attributs HTML
+      return {
+        success: true,
+        message: "Merci pour votre message ! Nous vous répondrons dans les plus brefs délais.",
+      };
+    }
+
+    // === SOLUTION 2: Web3Forms (Recommandé) ===
     if (process.env.WEB3FORMS_ACCESS_KEY) {
       const formData = new FormData();
       formData.append('access_key', process.env.WEB3FORMS_ACCESS_KEY);
