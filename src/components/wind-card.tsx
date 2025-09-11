@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -43,22 +42,27 @@ const weatherInfo: { [key in 'sunny' | 'cloudy' | 'rainy']: { label: string; ico
 export function WindCard({ className }: { className?: string }) {
   const [weatherState, setWeatherState] = useState<WeatherState>({ status: 'loading', data: null });
 
+  // Fonction de conversion km/h → nœuds (résultat arrondi)
+  const kmhToKnots = (kmh: number): number => {
+    return Math.round(kmh * 0.539957);
+  };
+
   useEffect(() => {
     const fetchWeather = async () => {
       try {
         const response = await fetch('/api/weather');
         const data = await response.json();
-        
+
         if (!response.ok) {
             throw new Error(data.error || 'Impossible de récupérer les données météo.');
         }
-        
+
         setWeatherState({
           status: 'success',
           data: {
-            speed: Math.round(data.wind_kph),
+            speed: kmhToKnots(data.wind_kph),
             direction: data.wind_dir,
-            gust: data.gust_kph,
+            gust: data.gust_kph ? kmhToKnots(data.gust_kph) : null,
             weather: getWeatherType(data.condition_code),
             weatherText: data.condition_text
           }
@@ -72,9 +76,9 @@ export function WindCard({ className }: { className?: string }) {
     };
 
     fetchWeather();
-    
+
     // Rafraîchir les données toutes les 15 minutes
-    const interval = setInterval(fetchWeather, 15 * 60 * 1000); 
+    const interval = setInterval(fetchWeather, 15 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -99,13 +103,13 @@ export function WindCard({ className }: { className?: string }) {
         if (!weatherState.data) return null;
         const { data } = weatherState;
         const CurrentWeatherIcon = weatherInfo[data.weather].icon;
-        
+
         return (
           <div className="space-y-6 w-full">
              <div className="grid grid-cols-3 gap-2 text-center">
               <div className="flex flex-col items-center">
                 <Gauge className="w-8 h-8 mx-auto text-primary" />
-                <p className="text-3xl font-bold mt-1">{data.speed} <span className="text-lg font-normal">km/h</span></p>
+                <p className="text-3xl font-bold mt-1">{data.speed} <span className="text-lg font-normal">nœuds</span></p>
                 <p className="text-muted-foreground">Vitesse</p>
               </div>
               <div className="flex flex-col items-center">
@@ -121,7 +125,7 @@ export function WindCard({ className }: { className?: string }) {
             </div>
             {data.gust && data.gust > data.speed && (
                 <div className="text-center p-3 bg-primary text-primary-foreground rounded-lg">
-                    <p className="text-lg font-semibold">Rafales jusqu'à <span className="font-bold text-xl text-accent">{data.gust} km/h</span></p>
+                    <p className="text-lg font-semibold">Rafales jusqu'à <span className="font-bold text-xl text-accent">{data.gust} nœuds</span></p>
                 </div>
             )}
           </div>
