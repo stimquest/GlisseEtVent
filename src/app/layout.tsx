@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { AdminProvider } from './admin/admin-context';
 import { AdminUILayout } from "@/components/admin/admin-ui-layout";
 import { usePathname } from 'next/navigation';
+import { CookieBanner } from "@/components/cookie-banner";
 
 function AdminAuthWrapper({ children }: { children: ReactElement }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -142,6 +143,7 @@ export default function RootLayout({
         <AdminProvider>
             {isAdminRoute ? <AdminAuthWrapper>{children as ReactElement}</AdminAuthWrapper> : children}
         </AdminProvider>
+        <CookieBanner />
         <Toaster />
       </body>
     </html>

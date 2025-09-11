@@ -58,8 +58,6 @@ const supabase = createSecureSupabaseClient();
 // SUPABASE_ANON_KEY - Clé anonyme Supabase
 import type { Slot, Booking } from "./admin/types";
 import { revalidatePath } from "next/cache";
-import nodemailer from "nodemailer";
-import { env } from "@/env";
 
 // --- Formulaire de Contact ---
 const contactSchema = z.object({
@@ -81,17 +79,7 @@ export async function submitContactForm(values: z.infer<typeof contactSchema>) {
   try {
     const { name, email, message } = validatedFields.data;
 
-    // === SOLUTION 1: Netlify Forms (si activé) ===
-    if (process.env.NEXT_PUBLIC_USE_NETLIFY_FORMS === "true") {
-      console.log("📧 Envoi via Netlify Forms");
-      // Netlify Forms gère automatiquement la soumission côté client avec les attributs HTML
-      return {
-        success: true,
-        message: "Merci pour votre message ! Nous vous répondrons dans les plus brefs délais.",
-      };
-    }
-
-    // === SOLUTION 2: Web3Forms (Recommandé) ===
+    // === SEULE SOLUTION : Web3Forms ===
     if (process.env.WEB3FORMS_ACCESS_KEY) {
       const formData = new FormData();
       formData.append('access_key', process.env.WEB3FORMS_ACCESS_KEY);
@@ -109,58 +97,12 @@ export async function submitContactForm(values: z.infer<typeof contactSchema>) {
           success: true,
           message: "Merci pour votre message ! Nous vous répondrons dans les plus brefs délais.",
         };
+      } else {
+        console.error("Erreur Web3Forms:", result);
       }
     }
 
-    // === SOLUTION 2: SMTP Fallback (si Web3Forms non configuré) ===
-    if (env.SMTP_HOST && env.SMTP_PORT && env.SMTP_USER && env.SMTP_PASS && env.CONTACT_EMAIL) {
-      const transporter = nodemailer.createTransport({
-        host: env.SMTP_HOST,
-        port: parseInt(env.SMTP_PORT || '587'),
-        secure: false,
-        auth: {
-          user: env.SMTP_USER,
-          pass: env.SMTP_PASS,
-        },
-      });
-
-      // Email à l'administrateur
-      await transporter.sendMail({
-        from: env.SMTP_USER,
-        to: env.CONTACT_EMAIL,
-        subject: `Nouveau message de contact de ${name}`,
-        html: `
-          <h2>Nouveau message de contact</h2>
-          <p><strong>Nom:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Message:</strong></p>
-          <p>${message.replace(/\n/g, '<br>')}</p>
-          <hr>
-          <p><em>Message envoyé depuis le formulaire de contact du site</em></p>
-        `,
-      });
-
-      // Email de confirmation à l'utilisateur
-      await transporter.sendMail({
-        from: env.SMTP_USER,
-        to: email,
-        subject: 'Confirmation de réception de votre message',
-        html: `
-          <h2>Merci pour votre message !</h2>
-          <p>Bonjour ${name},</p>
-          <p>Nous avons bien reçu votre message et nous vous recontacterons très prochainement.</p>
-          <p><strong>Votre message:</strong></p>
-          <p>${message.replace(/\n/g, '<br>')}</p>
-          <hr>
-          <p><em>Cet email est envoyé automatiquement, merci de ne pas y répondre.</em></p>
-        `,
-      });
-
-      return {
-        success: true,
-        message: "Merci pour votre message ! Nous vous répondrons dans les plus brefs délais.",
-      };
-    }
+    // === FALLBACK : Logging uniquement si Web3Forms échoue ===
 
     // === SOLUTION 3: Logging uniquement (si aucun service configuré) ===
     console.log("=== NOUVEAU MESSAGE DE CONTACT ===");

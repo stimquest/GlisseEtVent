@@ -40,11 +40,86 @@ export default function GroupsPage() {
 
     async function onSubmit(values: z.infer<typeof quoteSchema>) {
         console.log("Nouvelle demande de devis:", values);
-        toast({
-            title: "Demande de devis envoyée !",
-            description: "Merci ! Nous vous recontacterons très prochainement avec une proposition sur mesure.",
-        });
-        form.reset();
+
+        // Envoi vers Web3Forms
+        try {
+            const formData = new FormData();
+            formData.append('access_key', '7981d198-48aa-43fc-a3d1-6b67aa02b05a');
+            formData.append('subject', `Demande de devis groupes/séminaires de ${values.name}`);
+            formData.append('from_name', 'Glisse et Vent - Site Web');
+            formData.append('botcheck', '');
+
+            // Adapter les données pour l'envoi
+            const emailContent = `
+NOM: ${values.name}
+ENTREPRISE: ${values.company || 'N/A'}
+EMAIL: ${values.email}
+TÉLÉPHONE: ${values.phone || 'N/A'}
+PARTICIPANTS: ${values.participants || 'Non spécifié'}
+
+DESCRIPTION DU PROJET:
+${values.project}
+            `;
+
+            formData.append('name', values.name);
+            formData.append('email', values.email);
+            formData.append('message', emailContent);
+
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                body: JSON.stringify({
+                    access_key: '7981d198-48aa-43fc-a3d1-6b67aa02b05a',
+                    subject: `Demande de devis groupes/séminaires de ${values.name}`,
+                    from_name: 'Glisse et Vent - Site Web',
+                    name: values.name,
+                    email: values.email,
+                    entreprise: values.company || '',
+                    telephone: values.phone || '',
+                    participants: values.participants?.toString() || '',
+                    projet: values.project,
+                    message: `Nouvelle demande de devis:
+
+NOM: ${values.name}
+ENTREPRISE: ${values.company || 'N/A'}
+EMAIL: ${values.email}
+TÉLÉPHONE: ${values.phone || 'N/A'}
+PARTICIPANTS: ${values.participants}
+
+DESCRIPTION DU PROJET:
+${values.project}
+
+------------
+Formulaire demandes de devis groupes/séminaires`,
+                    botcheck: '',
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                toast({
+                    title: "Demande de devis envoyée ! ✅",
+                    description: "Merci ! Nous vous recontacterons très prochainement avec une proposition sur mesure.",
+                });
+                form.reset();
+            } else {
+                toast({
+                    variant: "destructive",
+                    title: "Erreur d'envoi",
+                    description: "Une erreur s'est produite. Veuillez réessayer ou nous contacter directement.",
+                });
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Erreur réseau",
+                description: "Impossible d'envoyer la demande. Vérifiez votre connexion internet.",
+            });
+        }
     }
 
 
@@ -63,8 +138,8 @@ export default function GroupsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col md:flex-row gap-8 items-center">
-             <div className="md:w-1/2 h-64 md:h-96 relative rounded-lg overflow-hidden">
-              <Image src="/img/image2.jpeg" alt="Groupe faisant du char à voile" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" data-ai-hint="team building" />
+             <div className="md:w-1/2 h-72 md:h-[400px] lg:h-[450px] relative rounded-lg overflow-hidden shadow-lg">
+              <Image src="/img/image2b.jpeg" alt="Groupe faisant du char à voile" fill sizes="(max-width: 768px) 256px, 50vw" className="object-cover object-center" data-ai-hint="team building" />
             </div>
             <div className="md:w-1/2 space-y-4">
               <p className="text-2xl font-semibold">

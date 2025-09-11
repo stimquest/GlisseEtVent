@@ -1,9 +1,10 @@
 import { Header } from "@/components/header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { MapPin, Phone, Mail } from "lucide-react";
+import { ContactForm } from "@/components/contact-form";
 
-export default function ContactPage({ searchParams }: { searchParams?: { success?: string } }) {
-  const success = searchParams?.success === "true";
+export default async function ContactPage({ searchParams }: { searchParams: { success?: string } }) {
+  const success = (await searchParams)?.success === "true";
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -56,58 +57,7 @@ export default function ContactPage({ searchParams }: { searchParams?: { success
                       <CardDescription>Envoyez-nous un message, nous vous répondrons rapidement.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {/* Netlify Forms configuration: minimal form markup */}
-                      <form
-                        name="contact"
-                        method="POST"
-                        data-netlify="true"
-                        action="/contact?success=true"
-                        className="space-y-4"
-                      >
-                        <input type="hidden" name="form-name" value="contact" />
-
-                        <p>
-                          <label className="block text-sm font-medium">Nom
-                            <input
-                              type="text"
-                              name="name"
-                              className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
-                              required
-                            />
-                          </label>
-                        </p>
-
-                        <p>
-                          <label className="block text-sm font-medium">Email
-                            <input
-                              type="email"
-                              name="email"
-                              className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
-                              required
-                            />
-                          </label>
-                        </p>
-
-                        <p>
-                          <label className="block text-sm font-medium">Message
-                            <textarea
-                              name="message"
-                              className="mt-1 block w-full rounded-md border bg-input p-2 text-foreground"
-                              rows={6}
-                              required
-                            />
-                          </label>
-                        </p>
-
-                        <p>
-                          <button
-                            type="submit"
-                            className="inline-flex items-center rounded bg-accent px-4 py-2 text-white"
-                          >
-                            Envoyer
-                          </button>
-                        </p>
-                      </form>
+                      <ContactForm showLink={true} />
                     </CardContent>
                  </Card>
             </div>
