@@ -17,19 +17,19 @@ export function GalleryCard({ className }: { className?: string }) {
       <CardHeader>
         <CardTitle className="text-4xl flex items-center gap-2">
           <Camera className="w-8 h-8 text-accent" />
-          Galerie
+          Galerie - Char à Voile & Loisirs Nautiques
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-grow p-2">
         <div className="grid grid-cols-2 grid-rows-2 gap-2 h-96">
             <div className="relative col-span-1 row-span-1 rounded-md overflow-hidden">
-                 <Image src="/img/image1.jpeg" alt="Char à voile rouge naviguant sur la plage de Denneville - École Glisse et Vent" fill sizes="150px" className="object-cover" />
+                 <Image src="/img/image1.jpeg" alt="Char à voile rouge naviguant sur la plage de Denneville - Loisirs nautiques Cotentin Manche" fill sizes="150px" className="object-cover" />
             </div>
              <div className="relative col-span-1 row-span-2 rounded-md overflow-hidden">
-                 <Image src="/img/image2.jpeg" alt="Groupe de trois chars à voile en formation sur la plage - Activité de team building" fill sizes="150px" className="object-cover" />
+                 <Image src="/img/image2.jpeg" alt="Groupe de trois chars à voile en formation sur la plage de Denneville - Loisirs outdoor et team building Cotentin" fill sizes="150px" className="object-cover" />
             </div>
              <div className="relative col-span-1 row-span-1 rounded-md overflow-hidden">
-                 <Image src="/img/image3.jpeg" alt="Char à voile bleu en pleine vitesse sur le sable - Cours de perfectionnement" fill sizes="150px" className="object-cover" />
+                 <Image src="/img/image3.jpeg" alt="Char à voile bleu en pleine vitesse sur le sable de Denneville - Cours voile et loisirs nautiques Manche" fill sizes="150px" className="object-cover" />
             </div>
         </div>
       </CardContent>

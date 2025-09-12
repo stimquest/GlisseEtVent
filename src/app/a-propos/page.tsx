@@ -45,7 +45,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="md:w-1/2 h-64 md:h-80 relative rounded-lg overflow-hidden">
-              <Image src="https://placehold.co/800x600.png" alt="Char à voile naviguant au coucher du soleil sur la plage de Denneville - École Glisse et Vent" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" data-ai-hint="sailing sunset" />
+              <Image src="/img/hero.jpg" alt="Char à voile naviguant au coucher du soleil sur la plage de Denneville - Loisirs nautiques Cotentin Manche" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" data-ai-hint="sailing sunset" />
             </div>
           </CardContent>
         </Card>

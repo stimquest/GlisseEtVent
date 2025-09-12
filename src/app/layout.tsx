@@ -74,15 +74,15 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Glisse et Vent | École de Char à Voile à Denneville-Plage</title>
-        <meta name="description" content="Découvrez le char à voile sur la magnifique plage de Denneville. Cours d'initiation, réservation de créneaux, et activités de groupe. Rejoignez-nous pour une aventure inoubliable." />
-        <meta name="keywords" content="char à voile, denneville, glisse, vent, école de voile, sport de plage, normandie, cotentin, activité de groupe, séminaire, char à voile normandie" />
+        <title>Glisse et Vent | Char à Voile & Loisirs Nautiques - Cotentin Manche</title>
+        <meta name="description" content="Découvrez le char à voile et les loisirs nautiques en Cotentin. Cours de voile, activités outdoor, sports de plage. École de char à voile Denneville-Plage - Normandie." />
+        <meta name="keywords" content="char à voile, voile, loisirs nautiques, activités outdoor, sport de plage, cotentin, manche, normandie, denneville, glisse et vent, école de voile, loisirs, activités de groupe, séminaire entreprise, team building" />
         <meta name="robots" content="index, follow" />
         <meta name="googlebot" content="index, follow" />
         
         {/* Open Graph */}
-        <meta property="og:title" content="Glisse et Vent | École de Char à Voile à Denneville-Plage" />
-        <meta property="og:description" content="Découvrez le char à voile sur la magnifique plage de Denneville. Cours d'initiation, réservation de créneaux, et activités de groupe." />
+        <meta property="og:title" content="Glisse et Vent | Char à Voile & Loisirs Nautiques - Cotentin Manche" />
+        <meta property="og:description" content="Découvrez le char à voile et les loisirs nautiques en Cotentin. Cours de voile, activités outdoor, sports de plage." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://glisse-et-vent.netlify.app" />
         <meta property="og:image" content="/img/hero.png" />
@@ -93,8 +93,8 @@ export default function RootLayout({
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Glisse et Vent | École de Char à Voile à Denneville-Plage" />
-        <meta name="twitter:description" content="Découvrez le char à voile sur la magnifique plage de Denneville. Cours d'initiation, réservation de créneaux, et activités de groupe." />
+        <meta name="twitter:title" content="Glisse et Vent | Char à Voile & Loisirs Nautiques - Cotentin Manche" />
+        <meta name="twitter:description" content="Découvrez le char à voile et les loisirs nautiques en Cotentin. Cours de voile, activités outdoor, sports de plage." />
         <meta name="twitter:image" content="/img/hero.png" />
         <meta name="twitter:site" content="@glisseetvent" />
         
@@ -109,7 +109,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "SportsActivityLocation",
               "name": "Glisse et Vent",
-              "description": "École de char à voile à Denneville-Plage en Normandie",
+              "description": "École de char à voile et loisirs nautiques en Cotentin Manche - Sports de plage et activités outdoor en Normandie",
               "url": "https://glisse-et-vent.netlify.app",
               "telephone": "+33-XX-XX-XX-XX",
               "address": {
@@ -129,8 +129,8 @@ export default function RootLayout({
               "priceRange": "€€",
               "currenciesAccepted": "EUR",
               "paymentAccepted": "Cash, Credit Card",
-              "sports": ["Char à voile", "Sports de glisse"],
-              "areaServed": ["Normandie", "Cotentin"],
+              "sports": ["Char à voile", "Voile", "Sports nautiques", "Activités outdoor", "Loisirs de plage", "Sports de glisse"],
+              "areaServed": ["Normandie", "Cotentin", "Manche", "Basse-Normandie", "Saint-Lô", "Cherbourg", "Granville"],
               "sameAs": [
                 "https://www.facebook.com/glisseetvent",
                 "https://www.instagram.com/glisseetvent"

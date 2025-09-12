@@ -18,12 +18,12 @@ export function AboutCard({ className }: { className?: string }) {
       <CardHeader>
         <CardTitle className="text-4xl flex items-center gap-2">
           <Users className="w-8 h-8 text-accent" />
-          L'Équipe
+          Notre Équipe - Moniteurs de Char à Voile
         </CardTitle>
-        <CardDescription className="text-xl">Notre école, notre passion, nos moniteurs.</CardDescription>
+        <CardDescription className="text-xl">Moniteurs passionnés de voile et loisirs nautiques en Cotentin.</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">
-        <p className="text-xl">Découvrez l'histoire de Glisse et Vent et rencontrez Julien et Claire, nos moniteurs passionnés qui vous accompagneront dans votre aventure.</p>
+        <p className="text-xl">Découvrez l'histoire de Glisse et Vent et rencontrez Fraçois et Rayan, nos moniteurs passionnés qui vous accompagneront dans votre aventure.</p>
       </CardContent>
       <CardFooter>
         <Button asChild className="w-full bg-primary hover:bg-accent hover:text-accent-foreground">

@@ -57,10 +57,10 @@ export function HeroVideo({ className }: { className?: string }) {
   <div className="max-w-sm sm:max-w-md md:max-w-lg space-y-6 mb-40 md:mb-0">
     {/* Texte */}
     <p className="text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed opacity-90">
-      Découvrez le plaisir de la vitesse et la liberté de glisser sur le sable. 
+      Découvrez le plaisir du char à voile et des loisirs nautiques en Cotentin. 
       Que vous soyez débutant ou pilote confirmé, 
       <span className="text-accent font-bold"> Glisse et Vent </span> 
-      vous propose une expérience inoubliable.
+      vous propose des activités outdoor inoubliables sur la plage de Denneville.
     </p>
 
     {/* Bouton */}
