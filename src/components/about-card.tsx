@@ -23,7 +23,7 @@ export function AboutCard({ className }: { className?: string }) {
         <CardDescription className="text-xl">Moniteurs passionnés de voile et loisirs nautiques en Cotentin.</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">
-        <p className="text-xl">Découvrez l'histoire de Glisse et Vent et rencontrez Fraçois et Rayan, nos moniteurs passionnés qui vous accompagneront dans votre aventure.</p>
+        <p className="text-xl">Découvrez l'histoire de Glisse et Vent et rencontrez François et Rayan, nos moniteurs passionnés qui vous accompagneront dans votre aventure.</p>
       </CardContent>
       <CardFooter>
         <Button asChild className="w-full bg-primary hover:bg-accent hover:text-accent-foreground">
