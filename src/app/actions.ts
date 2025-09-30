@@ -1,8 +1,9 @@
-
 "use server";
 
 import { z } from "zod";
 import { createClient } from '@supabase/supabase-js';
+import type { Slot, Booking } from "./admin/types";
+import { revalidatePath } from "next/cache";
 
 // Fonction utilitaire pour envoyer des emails via Web3Forms
 async function sendWeb3Form(formData: FormData) {
@@ -52,12 +53,6 @@ function createSecureSupabaseClient() {
 
 // Client Supabase sécurisé
 const supabase = createSecureSupabaseClient();
-
-// Variables d'environnement nécessaires (côté serveur uniquement)
-// SUPABASE_URL - URL de votre projet Supabase
-// SUPABASE_ANON_KEY - Clé anonyme Supabase
-import type { Slot, Booking } from "./admin/types";
-import { revalidatePath } from "next/cache";
 
 // --- Formulaire de Contact ---
 const contactSchema = z.object({
@@ -149,7 +144,7 @@ export async function getSlots(): Promise<Slot[]> {
         console.error("Supabase error fetching slots:", error.message);
         return [];
     }
-    
+
     // Correctly handle timezone by adding 'Z' to make it UTC and avoid off-by-one day errors.
     return slots.map((slot: any) => ({
         ...slot,
@@ -163,12 +158,12 @@ export async function addBooking(slotId: string, bookingData: Omit<Booking, 'id'
         .insert([{ ...bookingData, slot_id: slotId }])
         .select()
         .single();
-    
+
     if (error) {
         console.error("Supabase error adding booking:", error.message);
         return { success: false, error: error.message };
     }
-    
+
     revalidatePath('/reservations');
     revalidatePath('/admin');
 
@@ -178,8 +173,10 @@ export async function addBooking(slotId: string, bookingData: Omit<Booking, 'id'
 export async function addSlot(slotData: Omit<Slot, 'id' | 'bookings'>) {
     const { date, ...rest } = slotData;
 
-    // SOLUTION ULTRA SIMPLE : Utiliser toLocaleDateString avec format invariant
-    const dateString = date.toLocaleDateString('en-CA'); // Format YYYY-MM-DD invariant
+    // SOLUTION FIX : Format YYYY-MM-DD simple sans timezone pour éviter les problèmes
+    const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+    console.log('🔧 Tentative de création de créneau:', { ...rest, date: dateString });
 
     const { data, error } = await supabase
         .from('slots')
@@ -188,10 +185,12 @@ export async function addSlot(slotData: Omit<Slot, 'id' | 'bookings'>) {
         .single();
 
     if (error) {
-        console.error("Supabase error adding slot:", error.message);
+        console.error("❌ Supabase error adding slot:", error.message);
+        console.error("📋 Données envoyées:", { ...rest, date: dateString });
         return { success: false, error: error.message };
     }
 
+    console.log('✅ Créneau créé avec succès:', data);
     revalidatePath('/admin/planning');
     return { success: true, data };
 }
@@ -217,7 +216,7 @@ export async function cancelBooking(bookingId: string) {
         .from('bookings')
         .delete()
         .eq('id', bookingId);
-    
+
     if (error) {
         console.error("Supabase error canceling booking:", error.message);
         return { success: false, error: error.message };
@@ -230,13 +229,13 @@ export async function cancelBooking(bookingId: string) {
 export async function updateBooking(bookingId: string, values: { slot_id: string; simpleChars: number; doubleChars: number; }) {
     const { error } = await supabase
         .from('bookings')
-        .update({ 
+        .update({
             slot_id: values.slot_id,
             simpleChars: values.simpleChars,
             doubleChars: values.doubleChars,
         })
         .eq('id', bookingId);
-    
+
     if (error) {
         console.error("Supabase error updating booking:", error.message);
         return { success: false, error: error.message };

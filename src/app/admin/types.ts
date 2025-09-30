@@ -1,4 +1,3 @@
-
 export type SlotStatus = 'Disponible' | 'Confirmé' | 'Complet';
 
 export type Booking = {
@@ -18,4 +17,6 @@ export type Slot = {
   capacitySimple: number;
   capacityDouble: number;
   bookings: Booking[];
+  status?: SlotStatus; // Optional pour la compatibilité
+  userName?: string; // Optional pour la compatibilité
 };

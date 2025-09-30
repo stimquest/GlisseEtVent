@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -80,29 +79,32 @@ export function AdminCalendar({ slots = [], setSlots }: AdminCalendarProps) {
     const [startH, startM] = data.startTime.split(':').map(Number);
     const [endH, endM] = data.endTime.split(':').map(Number);
 
-    const newSlot: Slot = {
+    const calendarNewSlot: Slot = {
       id: Date.now().toString(),
       date: startOfDay(data.date),
       start: startH * 60 + startM,
       end: endH * 60 + endM,
+      capacitySimple: 8,
+      capacityDouble: 1,
+      bookings: [],
       status: 'Disponible',
     };
-    setSlots(prev => [...prev, newSlot].sort((a,b) => a.date.getTime() - b.date.getTime() || a.start - b.start));
+    setSlots(prev => [...prev, calendarNewSlot].sort((a,b) => a.date.getTime() - b.date.getTime() || a.start - b.start));
     toast({ title: "Créneau ajouté !", description: `Nouveau créneau disponible le ${format(data.date, 'dd/MM/yyyy')} de ${data.startTime} à ${data.endTime}.` });
     form.reset({ date: data.date, startTime: "14:00", endTime: "15:30"});
     setIsFormOpen(false);
   }
-  
+
   const cancelBooking = (slotId: string) => {
     setSlots(slots.map(s => s.id === slotId ? { ...s, status: 'Disponible', userName: undefined } : s));
     toast({ title: "Réservation annulée", description: "Le créneau est de nouveau disponible." });
   };
-  
+
   const deleteSlot = (slotId: string) => {
     setSlots(slots.filter(s => s.id !== slotId));
     toast({ variant: "destructive", title: "Créneau supprimé", description: "Le créneau a été retiré de la liste." });
   };
-  
+
   const today = startOfDay(new Date());
 
   const days = Array.from({ length: 7 }).map((_, i) => {
@@ -145,46 +147,46 @@ export function AdminCalendar({ slots = [], setSlots }: AdminCalendarProps) {
                 </DialogHeader>
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                     <FormField
-                        control={form.control}
-                        name="date"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                            <FormLabel>Date</FormLabel>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                <FormControl>
-                                    <Button
-                                    variant={"outline"}
-                                    className={cn(
-                                        "w-full pl-3 text-left font-normal",
-                                        !field.value && "text-muted-foreground"
-                                    )}
-                                    >
-                                    {field.value ? (
-                                        format(field.value, "PPP", { locale: fr })
-                                    ) : (
-                                        <span>Choisissez une date</span>
-                                    )}
-                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                    </Button>
-                                </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                    locale={fr}
-                                    mode="single"
-                                    selected={field.value}
-                                    onSelect={field.onChange}
-                                    disabled={(date) => isBefore(date, today)}
-                                    initialFocus
-                                />
-                                </PopoverContent>
-                            </Popover>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
+                      <FormField
+                         control={form.control}
+                         name="date"
+                         render={({ field }) => (
+                             <FormItem className="flex flex-col">
+                             <FormLabel>Date</FormLabel>
+                             <Popover>
+                                 <PopoverTrigger asChild>
+                                 <FormControl>
+                                     <Button
+                                     variant={"outline"}
+                                     className={cn(
+                                         "w-full pl-3 text-left font-normal",
+                                         !field.value && "text-muted-foreground"
+                                     )}
+                                     >
+                                     {field.value ? (
+                                         format(field.value, "PPP", { locale: fr })
+                                     ) : (
+                                         <span>Choisissez une date</span>
+                                     )}
+                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                     </Button>
+                                 </FormControl>
+                                 </PopoverTrigger>
+                                 <PopoverContent className="w-auto p-0" align="start">
+                                 <Calendar
+                                     locale={fr}
+                                     mode="single"
+                                     selected={field.value}
+                                     onSelect={field.onChange}
+                                     disabled={(date) => isBefore(date, today)}
+                                     initialFocus
+                                 />
+                                 </PopoverContent>
+                             </Popover>
+                             <FormMessage />
+                             </FormItem>
+                         )}
+                         />
                     <div className="grid grid-cols-2 gap-4">
                         <FormField
                             control={form.control}
@@ -199,19 +201,19 @@ export function AdminCalendar({ slots = [], setSlots }: AdminCalendarProps) {
                                 </FormItem>
                             )}
                         />
-                         <FormField
-                            control={form.control}
-                            name="endTime"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Heure de fin</FormLabel>
-                                <FormControl>
-                                    <Input type="time" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                          <FormField
+                             control={form.control}
+                             name="endTime"
+                             render={({ field }) => (
+                                 <FormItem>
+                                 <FormLabel>Heure de fin</FormLabel>
+                                 <FormControl>
+                                     <Input type="time" {...field} />
+                                 </FormControl>
+                                 <FormMessage />
+                                 </FormItem>
+                             )}
+                         />
                     </div>
                     <DialogFooter>
                       <DialogClose asChild><Button type="button" variant="ghost">Annuler</Button></DialogClose>
@@ -234,53 +236,53 @@ export function AdminCalendar({ slots = [], setSlots }: AdminCalendarProps) {
                   return (
                     <div key={slot.id} className={`p-3 rounded-md transition-colors border-l-4 ${slot.status === 'Confirmé' ? 'border-primary bg-primary/10' : 'border-green-500 bg-muted/50'}`}>
                       <div className="flex items-center justify-between">
-                         <div className="font-semibold text-lg flex items-center gap-2">
-                            <Clock className="w-4 h-4"/>
-                            <span>{formatTime(slot.start)} - {formatTime(slot.end)}</span>
-                         </div>
-                         <Badge variant={slot.status === 'Confirmé' ? 'default' : 'secondary'}>{slot.status}</Badge>
+                          <div className="font-semibold text-lg flex items-center gap-2">
+                             <Clock className="w-4 h-4"/>
+                             <span>{formatTime(slot.start)} - {formatTime(slot.end)}</span>
+                          </div>
+                          <Badge variant={slot.status === 'Confirmé' ? 'default' : 'secondary'}>{slot.status}</Badge>
                       </div>
                       <div className="mt-2 min-h-[40px] flex items-center justify-between">
                         {slot.status === 'Confirmé' ? (
                           <div className="flex items-center gap-2 text-primary font-semibold">
-                               <User className="w-4 h-4"/>
-                               <span>{slot.userName}</span>
+                                <User className="w-4 h-4"/>
+                                <span>{slot.userName}</span>
                           </div>
                         ) : (
-                             <p className="text-sm text-muted-foreground">Personne n'a réservé.</p>
+                              <p className="text-sm text-muted-foreground">Personne n'a réservé.</p>
                         )}
-                         <div className="flex items-center gap-2">
-                            {slot.status === 'Confirmé' && !isPast && (
-                                <AlertDialog>
-                                    <AlertDialogTrigger asChild><Button variant="outline" size="sm">Annuler</Button></AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>Annuler la réservation ?</AlertDialogTitle>
-                                            <AlertDialogDescription>Le créneau de {slot.userName} sera libéré. Cette action est réversible.</AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>Fermer</AlertDialogCancel>
-                                            <AlertDialogAction onClick={() => cancelBooking(slot.id)}>Confirmer l'annulation</AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
-                             )}
-                             {!isPast && (
-                                <AlertDialog>
-                                    <AlertDialogTrigger asChild><Button variant="destructive" size="icon" className="h-8 w-8"><Trash2 className="w-4 h-4"/></Button></AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>Supprimer le créneau ?</AlertDialogTitle>
-                                            <AlertDialogDescription>Ce créneau de {formatTime(slot.start)} à {formatTime(slot.end)} sera définitivement supprimé. Cette action est irréversible.</AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>Fermer</AlertDialogCancel>
-                                            <AlertDialogAction className="bg-destructive hover:bg-destructive/90" onClick={() => deleteSlot(slot.id)}>Oui, supprimer</AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
-                             )}
-                         </div>
+                          <div className="flex items-center gap-2">
+                             {slot.status === 'Confirmé' && !isPast && (
+                                 <AlertDialog>
+                                     <AlertDialogTrigger asChild><Button variant="outline" size="sm">Annuler</Button></AlertDialogTrigger>
+                                     <AlertDialogContent>
+                                         <AlertDialogHeader>
+                                             <AlertDialogTitle>Annuler la réservation ?</AlertDialogTitle>
+                                             <AlertDialogDescription>Le créneau de {slot.userName} sera libéré. Cette action est réversible.</AlertDialogDescription>
+                                         </AlertDialogHeader>
+                                         <AlertDialogFooter>
+                                             <AlertDialogCancel>Fermer</AlertDialogCancel>
+                                             <AlertDialogAction onClick={() => cancelBooking(slot.id)}>Confirmer l'annulation</AlertDialogAction>
+                                         </AlertDialogFooter>
+                                     </AlertDialogContent>
+                                 </AlertDialog>
+                              )}
+                              {!isPast && (
+                                 <AlertDialog>
+                                     <AlertDialogTrigger asChild><Button variant="destructive" size="icon" className="h-8 w-8"><Trash2 className="w-4 h-4"/></Button></AlertDialogTrigger>
+                                     <AlertDialogContent>
+                                         <AlertDialogHeader>
+                                             <AlertDialogTitle>Supprimer le créneau ?</AlertDialogTitle>
+                                             <AlertDialogDescription>Ce créneau de {formatTime(slot.start)} à {formatTime(slot.end)} sera définitivement supprimé. Cette action est irréversible.</AlertDialogDescription>
+                                         </AlertDialogHeader>
+                                         <AlertDialogFooter>
+                                             <AlertDialogCancel>Fermer</AlertDialogCancel>
+                                             <AlertDialogAction className="bg-destructive hover:bg-destructive/90" onClick={() => deleteSlot(slot.id)}>Oui, supprimer</AlertDialogAction>
+                                         </AlertDialogFooter>
+                                     </AlertDialogContent>
+                                 </AlertDialog>
+                              )}
+                          </div>
                       </div>
                     </div>
                   )

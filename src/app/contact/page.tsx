@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { MapPin, Phone, Mail } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
 
-export default async function ContactPage({ searchParams }: { searchParams: { success?: string } }) {
-  const success = (await searchParams)?.success === "true";
+export default async function ContactPage({ searchParams }: { searchParams: Promise<{ success?: string }> }) {
+  const params = await searchParams;
+  const success = params?.success === "true";
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
