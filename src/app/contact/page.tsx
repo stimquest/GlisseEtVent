@@ -58,7 +58,7 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
                       <CardDescription>Envoyez-nous un message, nous vous répondrons rapidement.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <ContactForm showLink={true} />
+                      <ContactForm showLink={false} />
                     </CardContent>
                  </Card>
             </div>

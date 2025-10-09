@@ -79,13 +79,6 @@ export function ContactForm({ showLink = true }: ContactFormProps) {
   return (
     <>
       <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold mb-2">Contactez-nous</h2>
-          <p className="text-muted-foreground">
-            Une question ? N'hésitez pas à nous contacter !
-          </p>
-        </div>
-
         {!isSubmitSuccessful && (
           <form onSubmit={handleSubmit(onSubmit)}>
             <input
@@ -185,7 +178,7 @@ export function ContactForm({ showLink = true }: ContactFormProps) {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full md:w-auto flex items-center justify-center gap-2 bg-accent text-white hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full md:w-auto flex items-center justify-center gap-2 bg-accent text-black hover:bg-accent/80 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting && <Loader2 className="w-5 h-5 animate-spin" />}
                 {isSubmitting ? "Envoi en cours..." : "Envoyer le message"}
