@@ -9,15 +9,15 @@ import { Users, Sunset, Mail } from "lucide-react";
 const monitors = [
   {
     name: "Frenzy",
-    role: "Moniteur Principal & Fondateur",
-    bio: "Passionné de char à voile depuis son plus jeune âge, François a fondé Glisse et Vent pour partager son amour de la glisse et du vent. Il saura vous transmettre les meilleures techniques en toute sécurité.",
+    role: "Moniteur & Cofondateur",
+    bio: "Passionné de char à voile depuis son plus jeune âge, François a cofondé Glisse et Vent avec Rayan pour partager leur amour commun de la vitesse et de la liberté. Il saura vous initier ou vous perfectionner avec enthousiasme et bienveillance.",
     image: "/img/frenzy.png",
     hint: "male portrait"
   },
   {
     name: "Rayan",
-    role: "Moniteur & Spécialiste Vitesse",
-    bio: "Compétiteur dans l'âme, Rayan est notre expert en vitesse et en perfectionnement. Il vous poussera à dépasser vos limites sur le sable de Denneville.",
+    role: "Moniteur & Cofondateur",
+    bio: "Compétiteur dans l’âme, Rayan a cofondé Glisse et Vent avec François pour transmettre sa passion du char à voile sous toutes ses formes. Entre technique et adrénaline, il saura vous faire vivre des sensations fortes sur les plages de Denneville.",
     image: "/img/rayan.png",
     hint: "male portrait"
   }

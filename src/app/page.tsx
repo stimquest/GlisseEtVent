@@ -51,9 +51,10 @@ export default function Home() {
               <p className="text-xs mt-1">Tous droits réservés</p>
             </div>
             <div className="flex items-center gap-6 text-xs">
-              <Link href="/status" className="hover:text-foreground transition-colors">
+              {/* Lien Diagnostic commenté en production */}
+              {/* <Link href="/status" className="hover:text-foreground transition-colors">
                 🔍 Diagnostic
-              </Link>
+              </Link> */}
               <Link href="/rgpd" className="hover:text-foreground transition-colors">
                 Politique de confidentialité
               </Link>
