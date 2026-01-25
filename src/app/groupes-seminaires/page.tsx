@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { Users, Building, Send } from "lucide-react";
+import { submitQuoteForm } from "@/app/actions";
 
 const quoteSchema = z.object({
   name: z.string().min(2, { message: "Le nom est requis." }),
@@ -39,85 +40,20 @@ export default function GroupsPage() {
     });
 
     async function onSubmit(values: z.infer<typeof quoteSchema>) {
-        console.log("Nouvelle demande de devis:", values);
+        // Utiliser la Server Action sécurisée
+        const result = await submitQuoteForm(values);
 
-        // Envoi vers Web3Forms
-        try {
-            const formData = new FormData();
-            formData.append('access_key', '7981d198-48aa-43fc-a3d1-6b67aa02b05a');
-            formData.append('subject', `Demande de devis groupes/séminaires de ${values.name}`);
-            formData.append('from_name', 'Glisse et Vent - Site Web');
-            formData.append('botcheck', '');
-
-            // Adapter les données pour l'envoi
-            const emailContent = `
-NOM: ${values.name}
-ENTREPRISE: ${values.company || 'N/A'}
-EMAIL: ${values.email}
-TÉLÉPHONE: ${values.phone || 'N/A'}
-PARTICIPANTS: ${values.participants || 'Non spécifié'}
-
-DESCRIPTION DU PROJET:
-${values.project}
-            `;
-
-            formData.append('name', values.name);
-            formData.append('email', values.email);
-            formData.append('message', emailContent);
-
-            const response = await fetch("https://api.web3forms.com/submit", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                },
-                body: JSON.stringify({
-                    access_key: '7981d198-48aa-43fc-a3d1-6b67aa02b05a',
-                    subject: `Demande de devis groupes/séminaires de ${values.name}`,
-                    from_name: 'Glisse et Vent - Site Web',
-                    name: values.name,
-                    email: values.email,
-                    entreprise: values.company || '',
-                    telephone: values.phone || '',
-                    participants: values.participants?.toString() || '',
-                    projet: values.project,
-                    message: `Nouvelle demande de devis:
-
-NOM: ${values.name}
-ENTREPRISE: ${values.company || 'N/A'}
-EMAIL: ${values.email}
-TÉLÉPHONE: ${values.phone || 'N/A'}
-PARTICIPANTS: ${values.participants}
-
-DESCRIPTION DU PROJET:
-${values.project}
-
-------------
-Formulaire demandes de devis groupes/séminaires`,
-                    botcheck: '',
-                }),
+        if (result.success) {
+            toast({
+                title: "Demande de devis envoyée ! ✅",
+                description: result.message,
             });
-
-            const result = await response.json();
-
-            if (result.success) {
-                toast({
-                    title: "Demande de devis envoyée ! ✅",
-                    description: "Merci ! Nous vous recontacterons très prochainement avec une proposition sur mesure.",
-                });
-                form.reset();
-            } else {
-                toast({
-                    variant: "destructive",
-                    title: "Erreur d'envoi",
-                    description: "Une erreur s'est produite. Veuillez réessayer ou nous contacter directement.",
-                });
-            }
-        } catch (error) {
+            form.reset();
+        } else {
             toast({
                 variant: "destructive",
-                title: "Erreur réseau",
-                description: "Impossible d'envoyer la demande. Vérifiez votre connexion internet.",
+                title: "Erreur d'envoi",
+                description: result.message,
             });
         }
     }

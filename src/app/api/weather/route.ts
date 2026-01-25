@@ -25,7 +25,7 @@ export async function GET() {
     try {
       const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${openWeatherKey}&units=metric&lang=fr`;
       const response = await fetch(apiUrl, {
-        next: { revalidate: 60 * 10 },
+        next: { revalidate: 60 * 60 * 3 }, // Revalidation toutes les 3 heures (8h, 11h, 14h, 17h, 20h, 23h, 2h, 5h)
         signal: AbortSignal.timeout(10000) // Timeout de 10 secondes
       });
 
@@ -75,7 +75,7 @@ export async function GET() {
     try {
       const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${weatherApiKey}&q=${lat},${lon}&lang=fr`;
       const response = await fetch(apiUrl, {
-        next: { revalidate: 60 * 10 },
+        next: { revalidate: 60 * 60 * 3 }, // Revalidation toutes les 3 heures (8h, 11h, 14h, 17h, 20h, 23h, 2h, 5h)
         signal: AbortSignal.timeout(10000)
       });
 

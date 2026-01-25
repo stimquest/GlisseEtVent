@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { submitContactForm } from "@/app/actions";
 
 interface ContactFormProps {
   showLink?: boolean;
@@ -13,9 +14,7 @@ export function ContactForm({ showLink = true }: ContactFormProps) {
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
-    control,
     formState: { errors, isSubmitSuccessful, isSubmitting },
   } = useForm({
     mode: "onTouched",
@@ -23,57 +22,28 @@ export function ContactForm({ showLink = true }: ContactFormProps) {
       name: "",
       email: "",
       message: "",
-      access_key: "7981d198-48aa-43fc-a3d1-6b67aa02b05a",
-      from_name: "Glisse et Vent - Site Web",
-      botcheck: "",
     },
   });
 
   const [isSuccess, setIsSuccess] = React.useState(false);
   const [Message, setMessage] = React.useState("");
 
-  const userName = useWatch({
-    control,
-    name: "name",
-    defaultValue: "Un visiteur"
-  });
-
-  // const subjectValue = `${userName} vous a envoyé un message depuis le site web`;
-  const subjectValue = `Nouveau message de contact depuis le site web`;
-
   const onSubmit = async (data: any) => {
-    console.log("Formulaire soumis:", data);
+    // Utiliser la Server Action sécurisée
+    const result = await submitContactForm({
+      name: data.name,
+      email: data.email,
+      message: data.message,
+    });
 
-    // Ajouter le sujet dynamiquement ici
-    const formData = {
-      ...data,
-      subject: subjectValue,
-    };
-
-    await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(formData, null, 2),
-    })
-      .then(async (response) => {
-        let json = await response.json();
-        if (json.success) {
-          setIsSuccess(true);
-          setMessage(json.message);
-          reset();
-        } else {
-          setIsSuccess(false);
-          setMessage(json.message);
-        }
-      })
-      .catch((error) => {
-        setIsSuccess(false);
-        setMessage("Erreur client. Vérifiez la console pour plus d'infos.");
-        console.log(error);
-      });
+    if (result.success) {
+      setIsSuccess(true);
+      setMessage(result.message);
+      reset();
+    } else {
+      setIsSuccess(false);
+      setMessage(result.message);
+    }
   };
 
   return (
@@ -81,25 +51,6 @@ export function ContactForm({ showLink = true }: ContactFormProps) {
       <div className="space-y-6">
         {!isSubmitSuccessful && (
           <form onSubmit={handleSubmit(onSubmit)}>
-            <input
-              type="hidden"
-              value="7981d198-48aa-43fc-a3d1-6b67aa02b05a"
-              {...register("access_key")}
-            />
-            <input
-              type="hidden"
-              value="Glisse et Vent - Site Web"
-              {...register("from_name")}
-            />
-            <input
-              type="checkbox"
-              id=""
-              className="hidden"
-              style={{ display: "none" }}
-              {...register("botcheck")}
-            />
-
-            {/* Sujet et autres champs cachés si nécessaire peuvent être ajoutés ici dans le JSON */}
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">

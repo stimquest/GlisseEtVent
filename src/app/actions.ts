@@ -128,6 +128,86 @@ export async function submitContactForm(values: z.infer<typeof contactSchema>) {
   }
 }
 
+// --- Formulaire de Devis Groupes/Séminaires ---
+const quoteSchema = z.object({
+  name: z.string().min(2, { message: "Le nom est requis." }),
+  company: z.string().optional(),
+  email: z.string().email({ message: "Veuillez saisir une adresse e-mail valide." }),
+  phone: z.string().optional(),
+  participants: z.number().min(1, { message: "Veuillez indiquer le nombre de participants." }),
+  project: z.string().min(10, { message: "Veuillez décrire votre projet (10 caractères min)." }),
+});
+
+export async function submitQuoteForm(values: z.infer<typeof quoteSchema>) {
+  const validatedFields = quoteSchema.safeParse(values);
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      message: "Données du formulaire invalides.",
+    };
+  }
+
+  try {
+    const { name, company, email, phone, participants, project } = validatedFields.data;
+
+    // Construire le message email
+    const emailContent = `
+DEMANDE DE DEVIS GROUPES/SÉMINAIRES
+
+NOM: ${name}
+ENTREPRISE: ${company || 'N/A'}
+EMAIL: ${email}
+TÉLÉPHONE: ${phone || 'N/A'}
+PARTICIPANTS: ${participants}
+
+DESCRIPTION DU PROJET:
+${project}
+    `.trim();
+
+    // === Envoi via Web3Forms ===
+    if (process.env.WEB3FORMS_ACCESS_KEY) {
+      const formData = new FormData();
+      formData.append('access_key', process.env.WEB3FORMS_ACCESS_KEY);
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('message', emailContent);
+      formData.append('subject', `Demande de devis groupes/séminaires de ${name}`);
+      formData.append('from_name', 'Glisse et Vent - Site Web');
+
+      const result = await sendWeb3Form(formData);
+
+      if (result.success) {
+        console.log("Demande de devis envoyée via Web3Forms:", result);
+        return {
+          success: true,
+          message: "Merci ! Nous vous recontacterons très prochainement avec une proposition sur mesure.",
+        };
+      } else {
+        console.error("Erreur Web3Forms (devis):", result);
+      }
+    }
+
+    // === FALLBACK : Logging uniquement ===
+    console.log("=== NOUVELLE DEMANDE DE DEVIS ===");
+    console.log(emailContent);
+    console.log("=================================");
+
+    return {
+      success: true,
+      message: "Merci ! Nous vous recontacterons très prochainement avec une proposition sur mesure.",
+    };
+
+  } catch (error) {
+    console.error("Erreur lors de l'envoi de la demande de devis:", error);
+
+    return {
+      success: false,
+      message: "Une erreur s'est produite. Veuillez réessayer ou nous contacter directement.",
+    };
+  }
+}
+
 // --- Gestion des données (Slots) avec Supabase ---
 
 export async function getSlots(): Promise<Slot[]> {

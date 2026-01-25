@@ -75,12 +75,8 @@ export function WindCard({ className }: { className?: string }) {
       }
     };
 
+    // Fetch initial au chargement - Les données sont mises à jour automatiquement toutes les 3h côté serveur
     fetchWeather();
-
-    // Rafraîchir les données toutes les 15 minutes
-    const interval = setInterval(fetchWeather, 15 * 60 * 1000);
-
-    return () => clearInterval(interval);
   }, []);
 
   const renderContent = () => {
