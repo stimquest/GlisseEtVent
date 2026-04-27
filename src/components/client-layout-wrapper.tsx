@@ -4,19 +4,30 @@ import { useState, type ReactElement, type ReactNode } from "react";
 import { AdminProvider } from '@/app/admin/admin-context';
 import { AdminUILayout } from "@/components/admin/admin-ui-layout";
 import { usePathname } from 'next/navigation';
+import { verifyAdminPassword } from "@/app/actions";
 
 function AdminAuthWrapper({ children }: { children: ReactElement }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isPending, setIsPending] = useState(false);
 
-  const handlePasswordSubmit = (e: React.FormEvent) => {
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "glisse123") {
-      setIsAuthenticated(true);
-      setError("");
-    } else {
-      setError("Mot de passe incorrect.");
+    setIsPending(true);
+    
+    try {
+      const isValid = await verifyAdminPassword(password);
+      if (isValid) {
+        setIsAuthenticated(true);
+        setError("");
+      } else {
+        setError("Mot de passe incorrect.");
+      }
+    } catch (err) {
+      setError("Erreur lors de la vérification.");
+    } finally {
+      setIsPending(false);
     }
   };
 
@@ -39,9 +50,10 @@ function AdminAuthWrapper({ children }: { children: ReactElement }) {
             {error && <p className="text-sm text-destructive">{error}</p>}
             <button
               type="submit"
-              className="w-full px-4 py-2 text-white bg-primary rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              disabled={isPending}
+              className="w-full px-4 py-2 text-white bg-primary rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50"
             >
-              Se connecter
+              {isPending ? "Vérification..." : "Se connecter"}
             </button>
           </form>
         </div>

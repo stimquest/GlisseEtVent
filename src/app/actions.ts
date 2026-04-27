@@ -324,3 +324,8 @@ export async function updateBooking(bookingId: string, values: { slot_id: string
     revalidatePath('/admin/planning');
     return { success: true };
 }
+
+export async function verifyAdminPassword(password: string) {
+    const validPassword = process.env.ADMIN_PASSWORD || "glisse123";
+    return password === validPassword;
+}
